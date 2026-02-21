@@ -1,0 +1,49 @@
+# ── Environment & secrets ────────────────────────────────────────────
+.env
+*.pem
+*.key
+
+# ── Python ───────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.venv/
+.pricing_env/
+*.egg-info/
+dist/
+build/
+
+# ── ML artifacts (large files — store in S3/GCS in production) ───────
+models/saved_models/*.pkl
+models/saved_models/prophet*.pkl
+models/saved_models*.ubj
+models/saved_models*.json
+data/processed/features.parquet
+results/prophet/forecast/forecasts_*.csv
+results/predictions.csv
+results/prophet/forecast_*.png
+results/prophet/forecast_*.png
+results/feature_importance.png
+
+# ── Database ──────────────────────────────────────────────────────────
+*.sql.bak
+
+# ── Jupyter ───────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ── OS ────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Testing ───────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ── Docker ────────────────────────────────────────────────────────────
+docker-compose.override.yml

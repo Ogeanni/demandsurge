@@ -1,0 +1,63 @@
+{
+  "created_at": "2026-02-19T12:24:40.036618",
+  "shape": [
+    20,
+    46
+  ],
+  "feature_cols": [
+    "base_price",
+    "current_price",
+    "price_7d_avg",
+    "price_30d_avg",
+    "price_90d_avg",
+    "price_momentum",
+    "price_volatility",
+    "trend_index_latest",
+    "trend_index_4w_avg",
+    "trend_slope",
+    "is_trending",
+    "demand_percentile",
+    "comp_count",
+    "comp_price_p25",
+    "comp_price_med",
+    "comp_price_p75",
+    "comp_price_range",
+    "price_position",
+    "is_price_competitive",
+    "inventory_qty",
+    "inventory_tier",
+    "inventory_pressure",
+    "demand_multiplier",
+    "month",
+    "day_of_week",
+    "is_weekend",
+    "quarter",
+    "is_holiday_season",
+    "is_back_to_school",
+    "days_until_black_friday",
+    "days_until_cyber_monday",
+    "days_until_christmas",
+    "days_until_valentines",
+    "days_until_mothers_day",
+    "days_until_prime_day",
+    "days_until_back_to_school",
+    "days_until_new_year",
+    "cat_electronics",
+    "cat_fashion",
+    "cat_home_goods",
+    "cat_sports"
+  ],
+  "target_col": "target_price",
+  "id_cols": [
+    "product_id",
+    "product_name",
+    "category"
+  ],
+  "n_products": 20,
+  "categories": [
+    "electronics",
+    "fashion",
+    "home_goods",
+    "sports"
+  ]
+}
