@@ -1,3 +1,7 @@
+# ── Git ───────────────────────────────────────────────────────────────
+.git
+.gitignore
+
 # ── Environment & secrets ────────────────────────────────────────────
 .env
 *.pem
@@ -17,18 +21,16 @@ env/
 dist/
 build/
 
-# ── ML artifacts (large files — store in S3/GCS in production) ───────
+# ── ML artifacts (large runtime outputs) ─────────────────────────────
 models/saved_models/*.pkl
 models/saved_models/prophet/*.pkl
 models/saved_models/*.ubj
 models/saved_models/*.json
-data/processed/features.parquet
-results/prophet/forecast/forecasts_*.csv
-results/predictions.csv
-results/prophet/forecast_*.png
-results/feature_importance.png
+results/prophet/*
+results/*
+logs/*
 
-# ── Database ──────────────────────────────────────────────────────────
+# ── Database backups ──────────────────────────────────────────────────
 *.sql.bak
 
 # ── Jupyter ───────────────────────────────────────────────────────────
@@ -44,5 +46,5 @@ Thumbs.db
 .coverage
 htmlcov/
 
-# ── Docker ────────────────────────────────────────────────────────────
+# ── Docker overrides ──────────────────────────────────────────────────
 docker-compose.override.yml
