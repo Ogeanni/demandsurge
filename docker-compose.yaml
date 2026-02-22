@@ -1,0 +1,94 @@
+version: "3.9"
+
+# ══════════════════════════════════════════════════════════════════════
+# DemandSurge — Docker Compose
+#
+# Services:
+#   db  — PostgreSQL (skipped on AWS — use RDS instead)
+#   api — FastAPI backend  (port 8000)
+#   ui  — Streamlit frontend (port 8501)
+#
+# Usage (local):
+#   docker-compose up --build
+#
+# Usage (EC2 with Docker, using RDS instead of db service):
+#   docker-compose up --build api ui   # Skip the db service — use RDS
+# ══════════════════════════════════════════════════════════════════════
+
+services:
+
+  # ── PostgreSQL ───────────────────────────────────────────────────────
+  db:
+    image: postgres:15-alpine
+    container_name: demandsurge_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB:       ${POSTGRES_DB:-demandsurge_db}
+    volumes:
+      # Persist data between container restarts
+      - postgres_data:/var/lib/postgresql/data
+      # Auto-run schema.sql on first startup
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    ports:
+      - "127.0.0.1:5432:5432"  # Bind to localhost only — never expose DB publicly
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-demandsurge_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── FastAPI Backend ──────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: demandsurge_api
+    restart: unless-stopped
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    env_file:
+      - .env
+    environment:
+      # Override DATABASE_URL to point at the db service container
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-demandsurge_db}
+      # API_BASE_URL not needed on the api service itself
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount data and models directories so trained models persist
+      - ./data:/app/data
+      - ./models:/app/models
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s   # Give agent time to load on startup
+
+  # ── Streamlit Frontend ───────────────────────────────────────────────
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: demandsurge_ui
+    restart: unless-stopped
+    command: streamlit run ui/app.py --server.port 8501 --server.address 0.0.0.0 --server.headless true
+    env_file:
+      - .env
+    environment:
+      # Point at the api container name (not localhost)
+      # API_BASE_URL not needed on the api service itself
+    ports:
+      - "8501:8501"
+    depends_on:
+      api:
+        condition: service_healthy
+
+# ── Volumes ───────────────────────────────────────────────────────────
+volumes:
+  postgres_data:
+    driver: local

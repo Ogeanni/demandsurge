@@ -44,7 +44,7 @@ logging.basicConfig(
     format="%(asctime)s  %(levelname)-8s  %(message)s",
     datefmt="%H:%M:%S",
 )
-log = logging.getLogger("api")
+log = logging.getLogger("app")
 
 # Suppress noisy loggers
 logging.getLogger("prophet").setLevel(logging.WARNING)

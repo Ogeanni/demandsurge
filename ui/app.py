@@ -46,7 +46,7 @@ def api_get(path: str, params: dict = None) -> dict | list | None:
     except requests.exceptions.ConnectionError:
         st.error(
             " Cannot reach the DemandSurge API. "
-            "Make sure it's running: `uvicorn api.main:app --reload --port 8000`"
+            "Make sure it's running: `uvicorn app.main:app --reload --port 8000`"
         )
         return None
     except requests.exceptions.HTTPError as e:
@@ -70,7 +70,7 @@ def api_post(path: str, payload: dict) -> dict | None:
     except requests.exceptions.ConnectionError:
         st.error(
             " Cannot reach the DemandSurge API. "
-            "Make sure it's running: `uvicorn api.main:app --reload --port 8000`"
+            "Make sure it's running: `uvicorn app.main:app --reload --port 8000`"
         )
         return None
     except requests.exceptions.HTTPError as e:
@@ -257,7 +257,7 @@ def render_sidebar():
                     st.caption(f"Agent error: {err}")
         else:
             st.markdown("🔴 API offline")
-            st.caption(f"Start with: `uvicorn api.main:app --port 8000`")
+            st.caption(f"Start with: `uvicorn app.main:app --port 8000`")
 
         st.markdown('<hr class="sidebar-divider">', unsafe_allow_html=True)
 

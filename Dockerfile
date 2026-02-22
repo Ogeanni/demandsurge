@@ -48,3 +48,4 @@ EXPOSE 8000 8501
 # ── Default command ───────────────────────────────────────────────────
 # Overridden per-service in docker-compose.yml
 CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
