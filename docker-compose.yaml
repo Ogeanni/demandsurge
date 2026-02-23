@@ -23,18 +23,18 @@ services:
     container_name: demandsurge_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER:     ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
-      POSTGRES_DB:       ${POSTGRES_DB:-demandsurge_db}
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB:       ${POSTGRES_DB}
     volumes:
       # Persist data between container restarts
       - postgres_data:/var/lib/postgresql/data
       # Auto-run schema.sql on first startup
       - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
     ports:
-      - "127.0.0.1:5432:5432"  # Bind to localhost only — never expose DB publicly
+      - "127.0.0.1:5431:5432"  # Bind to localhost only — never expose DB publicly
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-demandsurge_db}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -51,7 +51,7 @@ services:
       - .env
     environment:
       # Override DATABASE_URL to point at the db service container
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-demandsurge_db}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       # API_BASE_URL not needed on the api service itself
     ports:
       - "8000:8000"
@@ -79,9 +79,6 @@ services:
     command: streamlit run ui/app.py --server.port 8501 --server.address 0.0.0.0 --server.headless true
     env_file:
       - .env
-    environment:
-      # Point at the api container name (not localhost)
-      # API_BASE_URL not needed on the api service itself
     ports:
       - "8501:8501"
     depends_on:

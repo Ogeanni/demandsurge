@@ -1,0 +1,48 @@
+version: "3.9"
+
+# ══════════════════════════════════════════════════════════════════════
+# docker-compose.db.yml
+# Runs ONLY the PostgreSQL container on EC2.
+#
+# FastAPI and Streamlit run directly on the host via Supervisor.
+# Postgres runs in Docker for easy setup and data persistence.
+#
+# Usage on EC2:
+#   docker-compose -f docker-compose.db.yml up -d
+#   docker-compose -f docker-compose.db.yml logs
+#   docker-compose -f docker-compose.db.yml down      # stop (keeps data)
+#   docker-compose -f docker-compose.db.yml down -v   # stop + wipe data
+# ══════════════════════════════════════════════════════════════════════
+
+services:
+
+  postgres:
+    image: postgres:15-alpine       # Lightweight Alpine-based image
+    container_name: demandsurge_postgres
+    restart: unless-stopped         # Restart on crash or EC2 reboot
+    env_file:
+      - .env                        # Reads POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB
+    environment:
+      # These map directly to .env — no fallback defaults so missing vars fail loudly
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB:       ${POSTGRES_DB}
+    ports:
+      # Bind to localhost only — EC2 security group blocks 5432 externally
+      # FastAPI connects via localhost:5432 (same machine)
+      - "127.0.0.1:5432:5432"
+    volumes:
+      # Persist data across container restarts and EC2 reboots
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # Memory limit — t2.micro has 1GB total, cap Postgres at 256MB
+    mem_limit: 256m
+    memswap_limit: 256m
+
+volumes:
+  postgres_data:
+    driver: local
