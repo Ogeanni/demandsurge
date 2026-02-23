@@ -16,10 +16,6 @@ xgboost
 
 scikit-learn
 
-langchain
-
-langchain-openai
-
 streamlit
 
 python-dotenv
@@ -31,3 +27,14 @@ plotly
 fastapi 
 
 uvicorn
+
+
+# Core LangChain packages
+langchain==0.3.13
+langchain-openai==0.2.14
+langchain-community==0.3.13
+langchain-core==0.3.28
+
+# LangGraph for agentic workflows
+langgraph==0.2.59
+langgraph-checkpoint==2.0.6
