@@ -187,9 +187,9 @@ ENV_STRING=$(grep -v '^#' /home/ubuntu/demandsurge/.env \
       done)
 ENV_STRING="${ENV_STRING%,}"   # Strip trailing comma
 
-sudo tee /etc/supervisor/conf.d/demandsurge_api.conf > /dev/null << SUPEOF
-[program:demandsurge_api]
-command=/home/ubuntu/demandsurge/venv/bin/uvicorn api.main:app --host 0.0.0.0 --port 8000 --workers 1
+sudo tee /etc/supervisor/conf.d/demandsurge_app.conf > /dev/null << SUPEOF
+[program:demandsurge_app]
+command=/home/ubuntu/demandsurge/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
 directory=/home/ubuntu/demandsurge
 user=ubuntu
 autostart=true
@@ -197,8 +197,8 @@ autorestart=true
 startretries=3
 stopasgroup=true
 killasgroup=true
-stdout_logfile=/var/log/demandsurge_api.log
-stderr_logfile=/var/log/demandsurge_api.err.log
+stdout_logfile=/var/log/demandsurge_app.log
+stderr_logfile=/var/log/demandsurge_app.err.log
 stdout_logfile_maxbytes=10MB
 environment=HOME="/home/ubuntu",USER="ubuntu",$ENV_STRING
 SUPEOF
@@ -221,7 +221,7 @@ SUPEOF
 
 sudo supervisorctl reread
 sudo supervisorctl update
-sudo supervisorctl start demandsurge_api  2>/dev/null || sudo supervisorctl restart demandsurge_api
+sudo supervisorctl start demandsurge_app  2>/dev/null || sudo supervisorctl restart demandsurge_app
 sudo supervisorctl start demandsurge_ui   2>/dev/null || sudo supervisorctl restart demandsurge_ui
 echo "  Services started."
 
@@ -257,12 +257,12 @@ echo "  Status:"
 sudo supervisorctl status
 echo ""
 echo "  Logs:"
-echo "    sudo tail -f /var/log/demandsurge_api.log"
+echo "    sudo tail -f /var/log/demandsurge_app.log"
 echo "    sudo tail -f /var/log/demandsurge_ui.log"
 echo "    sudo docker-compose -f docker-compose.db.yml logs postgres"
 echo ""
 echo "  Manage services:"
-echo "    sudo supervisorctl restart demandsurge_api"
+echo "    sudo supervisorctl restart demandsurge_app"
 echo "    sudo supervisorctl restart demandsurge_ui"
 echo "    sudo docker-compose -f docker-compose.db.yml restart"
 echo ""
