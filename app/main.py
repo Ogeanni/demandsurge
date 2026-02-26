@@ -29,6 +29,7 @@ from typing import Optional
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
 
 # ── Path setup ────────────────────────────────────────────────────────
@@ -154,11 +155,7 @@ def chat(request: ChatRequest):
     elapsed_ms = int((time.time() - start) * 1000)
     log.info(f"Chat query completed in {elapsed_ms}ms")
 
-    return ChatResponse (
-        response=result["response"],
-        session_id=request.session_id,
-        elapsed_ms=elapsed_ms,
-    )
+    return PlainTextResponse(result["response"])
 
 # ── Products ──────────────────────────────────────────────────────────
 @app.get("/products", response_model=list[ProductOut], tags=["Products"])
