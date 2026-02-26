@@ -420,17 +420,7 @@ def _process_query(query: str):
             st.warning("The agent returned an empty response. Please try again.")
             return
 
-        # Render structured outputs in monospace, conversational as markdown
-        structured_headers = [
-            "PRICING RECOMMENDATION",
-            "DEMAND FORECAST",
-            "COMPETITOR PRICES",
-            "WEEKLY PRICING REVIEW",
-        ]
-        if any(h in response for h in structured_headers):
-            st.markdown(f"```\n{response}\n```")
-        else:
-            st.markdown(response)
+        st.markdown(response)
 
         st.session_state.messages.append({
             "role":    "assistant",
