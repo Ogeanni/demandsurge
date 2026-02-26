@@ -184,6 +184,29 @@ div[data-testid="stChatInput"] textarea:focus {
     border-color: var(--teal) !important;
     box-shadow: 0 0 0 2px rgba(27,127,121,0.15) !important;
 }
+/* ── Chat message bubbles ─────────────────────────────────────────── */
+[data-testid="stChatMessage"] {
+    background-color: var(--card) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+    margin-bottom: 12px !important;
+    box-shadow: 0 1px 3px rgba(13,27,42,0.06) !important;
+}
+
+/* Assistant bubble — slightly tinted */
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
+    background-color: #EEF4FF !important;
+    border-color: #C7D9F5 !important;
+}
+
+/* Response text inside assistant bubble */
+[data-testid="stChatMessage"] p {
+    color: var(--navy) !important;
+    font-size: 0.95rem !important;
+    line-height: 1.7 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -426,6 +449,24 @@ def _process_query(query: str):
             "role":    "assistant",
             "content": response,
         })
+
+    # Render response OUTSIDE the chat bubble in a styled container
+    st.markdown(
+        f"""
+        <div style="
+            background-color: #1e1e2e;
+            color: #e0e0e0;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #4a9eff;
+            font-size: 15px;
+            line-height: 1.7;
+            margin: 10px 0;
+            white-space: pre-wrap;
+        ">{response}</div>
+        """,
+        unsafe_allow_html=True
+    )
 
 # ══════════════════════════════════════════════════════════════════════
 # HOW IT WORKS EXPANDER
