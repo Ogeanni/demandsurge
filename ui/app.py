@@ -57,7 +57,7 @@ def api_get(path: str, params: dict = None) -> dict | list | None:
         return None
     
 
-def api_post(path: str, payload: dict) -> dict | str |`` None:
+def api_post(path: str, payload: dict) -> dict | str | None:
     """POST request to FastAPI. Returns parsed JSON or None on error."""
     try:
         resp = requests.post(
