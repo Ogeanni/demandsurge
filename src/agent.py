@@ -417,9 +417,9 @@ class DemandSurgeAgent:
         self.agent_executor = AgentExecutor(
             agent = self.agent,
             tools = TOOLS,
-            verbose = True,
+            verbose = False,
             handle_parsing_errors = True,
-            max_iterations = 3
+            max_iterations = 5
         )
         # Message history storage
         self.message_histories = {}
@@ -486,12 +486,19 @@ class DemandSurgeAgent:
             "chat_history": chat_history_message
         })
 
+        # Extract only the Final Answer — strip any leaked reasoning
+        output = result["output"]   
+
+        # If the agent leaked its reasoning, extract just the Final Answer
+        if "Final Answer:" in output:
+            output = output.split("Final Answer:")[-1].strip()
+
         # Save to history
         history.add_user_message(user_query)
-        history.add_ai_message(result["output"])
+        history.add_ai_message(output)
 
         return {
-            "response": result["output"],
+            "response": output,
             "session_id": session_id,
             "timestamp": datetime.now().isoformat()
         }
