@@ -57,7 +57,7 @@ def api_get(path: str, params: dict = None) -> dict | list | None:
         return None
     
 
-def api_post(path: str, payload: dict) -> dict | None:
+def api_post(path: str, payload: dict) -> dict | str |`` None:
     """POST request to FastAPI. Returns parsed JSON or None on error."""
     try:
         resp = requests.post(
@@ -66,7 +66,10 @@ def api_post(path: str, payload: dict) -> dict | None:
             timeout=120,   # Agent can take a while
         )
         resp.raise_for_status()
-        return resp.json()
+        try:
+            return resp.json()
+        except Exception:
+            return resp.text
     except requests.exceptions.ConnectionError:
         st.error(
             " Cannot reach the DemandSurge API. "
@@ -402,13 +405,20 @@ def _process_query(query: str):
         with st.spinner("Thinking..."):
             start  = time.time()
             result = api_post("/chat", {"message": query})
-            st.write("DEBUG:", result) 
 
         if result is None:
             return   # api_post already showed the error
 
         response   = result.get("response", "No response.")
         elapsed_ms = result.get("elapsed_ms", 0)
+
+        # Handle both plain text and JSON responses
+        if isinstance(response, str):
+            result = response
+        elif isinstance(response, dict):
+            result = response.get("response", str(response))
+        else:
+            result = str(response)
 
         # Render structured outputs in monospace, conversational as markdown
         structured_headers = [
