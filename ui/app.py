@@ -403,22 +403,22 @@ def _process_query(query: str):
     """POSTs the query to FastAPI /chat and renders the response."""
     with st.chat_message("assistant", avatar="💬"):
         with st.spinner("Thinking..."):
-            start  = time.time()
             result = api_post("/chat", {"message": query})
 
         if result is None:
-            return   # api_post already showed the error
+            return
 
-        response   = result.get("response", "No response.")
-        elapsed_ms = result.get("elapsed_ms", 0)
-
-        # Handle both plain text and JSON responses
-        if isinstance(response, str):
-            result = response
-        elif isinstance(response, dict):
-            result = response.get("response", str(response))
+        # Handle both plain text (str) and JSON (dict) responses
+        if isinstance(result, str):
+            response = result
+        elif isinstance(result, dict):
+            response = result.get("response", "No response.")
         else:
-            result = str(response)
+            response = str(result)
+
+        if not response:
+            st.warning("The agent returned an empty response. Please try again.")
+            return
 
         # Render structured outputs in monospace, conversational as markdown
         structured_headers = [
@@ -432,13 +432,10 @@ def _process_query(query: str):
         else:
             st.markdown(response)
 
-        st.caption(f"Response time: {elapsed_ms / 1000:.1f}s")
-
         st.session_state.messages.append({
             "role":    "assistant",
             "content": response,
         })
-
 
 # ══════════════════════════════════════════════════════════════════════
 # HOW IT WORKS EXPANDER
