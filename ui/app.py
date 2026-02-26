@@ -443,28 +443,24 @@ def _process_query(query: str):
             st.warning("The agent returned an empty response. Please try again.")
             return
 
-        st.markdown(response)
-
         st.session_state.messages.append({
             "role":    "assistant",
             "content": response,
         })
 
-    # Render response OUTSIDE the chat bubble in a styled container
+    # Render response OUTSIDE chat bubble — uses the dark styled container
     st.markdown(
-        f"""
-        <div style="
-            background-color: #1e1e2e;
-            color: #e0e0e0;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid #4a9eff;
-            font-size: 15px;
+        f"""<div style="
+            background-color: #0D1B2A;
+            color: #E8EDF2;
+            padding: 20px 24px;
+            border-radius: 12px;
+            border-left: 4px solid #1B7F79;
+            font-size: 0.95rem;
             line-height: 1.7;
-            margin: 10px 0;
+            margin: 4px 0 16px 0;
             white-space: pre-wrap;
-        ">{response}</div>
-        """,
+        ">{response}</div>""",
         unsafe_allow_html=True
     )
 
